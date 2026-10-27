@@ -1,0 +1,16 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "track": {
+      ".read": true,
+      "status": { ".write": true, ".validate": "newData.hasChildren(['lastSeen'])" },
+      "live":   { ".write": true },
+      "events": {
+        ".write": true,
+        ".indexOn": ["ts"],
+        "$id": { ".validate": "newData.hasChildren(['ts','label'])" }
+      }
+    }
+  }
+}

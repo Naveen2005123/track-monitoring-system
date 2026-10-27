@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Track Sentinel | Railway Track Monitoring</title>
+<link rel="stylesheet" href="style.css"></head><body class="booting">
+<div id="boot"><canvas id="rails"></canvas><div class="bt"><h1>TRACK<b>SENTINEL</b></h1><pre id="log"></pre></div></div>
+<header><div class="brand"><i class="lamp"></i><div><h2>TRACK SENTINEL</h2><small id="sec"></small></div></div>
+<div class="chip" id="link"><i></i><span>CONNECTING</span></div></header>
+<div id="alert" class="hide"></div><div id="stale" class="hide"></div>
+<main>
+<section class="panel cam"><div class="ph"><span>CAMERA FEED</span><span id="cbadge" class="badge">STANDBY</span>
+<button id="vt">HIDE FEED</button></div>
+<div class="screen"><img id="frame" alt=""><div id="nofeed">NO SIGNAL<br><small>Camera wakes when the ToF sensor sees an object</small></div><div class="scan"></div></div>
+<div class="pf"><span>Last frame: <b id="ftime">—</b></span></div></section>
+<section class="panel sig"><div class="ph"><span>TRACK ASPECT</span></div>
+<div class="lamps"><i id="l-g"></i><i id="l-a"></i><i id="l-r"></i></div>
+<h3 id="aspect">—</h3>
+<div class="track"><div class="rail"></div><div id="obs"></div></div></section>
+<section class="grid">
+<div class="card"><small>CONFIDENCE</small><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="34"/><circle id="ring" cx="40" cy="40" r="34"/></svg><b id="v-conf">0%</b></div>
+<div class="card"><small>PROXIMITY TRIGGER</small><b id="v-trig">—</b><span class="bar"><u id="b-trig"></u></span></div>
+<div class="card"><small>CLASS</small><b id="v-label">none</b></div>
+<div class="card"><small>DETECTIONS</small><b id="v-count">0</b></div>
+<div class="card"><small>WI-FI SIGNAL</small><b id="v-rssi">—</b><span class="bar"><u id="b-rssi"></u></span></div>
+<div class="card"><small>DEVICE UPTIME</small><b id="v-up">—</b></div>
+</section>
+<section class="panel ev"><div class="ph"><span>INCIDENT LOG</span><span id="evn"></span></div>
+<div id="hours"></div><div id="events"></div></section>
+</main>
+<div id="modal" class="hide"><div><div id="mhead"></div><img id="mimg" alt=""><button id="mclose">ACKNOWLEDGE</button></div></div>
+<script type="module" src="app.js"></script></body></html>

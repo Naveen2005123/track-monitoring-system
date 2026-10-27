@@ -1,0 +1,33 @@
+// ===== ADD TO YOUR ESP32-CAM SKETCH (keeps all your existing logic) =====
+// 1) Near the other #includes:
+#include <HTTPClient.h>
+#include <WiFiClientSecure.h>
+#include "mbedtls/base64.h"
+const String DB = "https://track-monitoring-system-8b3e3-default-rtdb.asia-southeast1.firebasedatabase.app";
+uint32_t lastBeat = 0, lastEvent = 0;
+
+String b64(const uint8_t* d, size_t n) {
+  size_t o = 0; mbedtls_base64_encode(NULL, 0, &o, d, n);
+  uint8_t* t = (uint8_t*)ps_malloc(o + 1); if (!t) return "";
+  mbedtls_base64_encode(t, o, &o, d, n); t[o] = 0; String s((char*)t); free(t); return s;
+}
+bool fbSend(const char* method, const String& path, const String& json) {
+  WiFiClientSecure c; c.setInsecure(); HTTPClient h;
+  h.begin(c, DB + path + ".json"); h.addHeader("Content-Type", "application/json");
+  int r = h.sendRequest(method, json); h.end(); return r == 200;
+}
+void pushStatus() {
+  fbSend("PUT", "/track/status", String("{\"camera\":") + (camOn ? "true" : "false") +
+    ",\"trigger\":" + (digitalRead(PIN_TRIGGER_IN) ? "true" : "false") +
+    ",\"detected\":" + (resultHigh ? "true" : "false") + ",\"label\":\"" + lastLabel +
+    "\",\"conf\":" + String(lastConf, 2) + ",\"count\":" + detectCount + ",\"rssi\":" + WiFi.RSSI() +
+    ",\"uptime\":" + (millis() / 1000) + ",\"lastSeen\":{\".sv\":\"timestamp\"}}");
+}
+// 2) In processFrame(), right after "if (!fb) return;" add (live video frame):
+//    fbSend("PUT", "/track/live", "{\"frame\":\"" + b64(fb->buf, fb->len) + "\",\"ts\":{\".sv\":\"timestamp\"}}");
+// 3) In processFrame(), inside "if (runInference(...)) {" after the memcpy, add (incident record):
+//    if (millis() - lastEvent > 10000 || lastEvent == 0) { lastEvent = millis();
+//      fbSend("POST", "/track/events", "{\"label\":\"" + label + "\",\"conf\":" + String(conf, 2) +
+//        ",\"ts\":{\".sv\":\"timestamp\"},\"image\":\"" + b64(lastJpeg, lastJpegLen) + "\"}"); }
+// 4) At the top of loop() add (heartbeat every 2 s):
+//    if (millis() - lastBeat > 2000) { lastBeat = millis(); pushStatus(); }
